@@ -1,8 +1,10 @@
 <?php
 
 use App\Http\Controllers\Admin\Auth\AuthenticatedSessionController;
+use App\Http\Controllers\HomeController;
 use App\Http\Controllers\HomeSessionController;
 use App\Http\Controllers\ProfileController;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -20,9 +22,25 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Route::get('/dashboard', function () {
-    return view('dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+Route::group(['middleware' => 'auth'], function () {
+    Route::get('dashboard', [HomeController::class, 'dashboard'])->name('dashboard');
+    // Route::get('role', function () {
+    //     $user = Auth::user();
+    //     if ($user->hasRole('editor')) {
+    //         dd('editor');
+    //     }
+    // });
+});
+
+Route::group(['middleware' => ['auth', 'role:editor']], function () {
+    Route::get('role', function () {
+        dd('hi');
+    });
+});
+
+// Route::get('/dashboard', function () {
+//     return view('dashboard');
+// })->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
