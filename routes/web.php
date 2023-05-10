@@ -32,7 +32,7 @@ Route::group(['middleware' => 'auth'], function () {
     // });
 });
 
-Route::group(['middleware' => 'role:editor'], function () {
+Route::group(['middleware' => ['auth', 'role:editor']], function () {
     Route::get('role', function () {
         dd('hi');
     });
